@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+echo Building postgres
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+pg=$DIR/../../postgres
+build_dir=$pg/build
+
+cd $pg
+./configure --prefix=$build_dir
+
+make
+make install

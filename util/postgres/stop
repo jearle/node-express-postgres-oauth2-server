@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+pg=$DIR/../../postgres
+pg_data=$pg/data
+pg_bin=$pg/build/bin
+
+$pg_bin/pg_ctl -D $pg_data stop

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+echo Cleaning postgres build
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+pg=$DIR/../../postgres
+pg_bin=$pg/build/bin
+pg_log=$DIR/../../log/postgres
+build_dir=$pg/build
+data_dir=$pg/data
+
+if [ -d $pg_bin ]; then
+
+  echo Stopping postgres process
+  $pg_bin/pg_ctl -D $data_dir stop
+
+fi
+
+echo Removing log
+rm -rf $pg_log
+
+echo Removing data directory
+rm -rf $data_dir
+
+echo Removing build directory
+rm -rf $build_dir
+

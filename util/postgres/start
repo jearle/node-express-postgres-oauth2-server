@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+clean=$DIR/clean
+build=$DIR/build
+stop=$DIR/stop
+pg=$DIR/../../postgres
+pg_bin=$pg/build/bin
+schema=$DIR/../../schema/schema.sql
+
+$stop
+
+first_start="no"
+if [ ! -d $pg/data ]; then
+
+  first_start="yes"
+  $clean
+  $build
+
+  echo Creating data directory
+  $pg_bin/initdb -D $pg/data
+
+fi
+
+echo Starting database
+$pg_bin/pg_ctl -D $pg/data -l $DIR/../../log/postgres start
+
+ready_log="LOG:  autovacuum launcher started"
+other_ready_log="LOG:  database system is ready to accept connections"
+current_log=$(tail -n1 $DIR/../../log/postgres)
+
+while [ "$ready_log" != "$current_log" ] && [ "$other_ready_log" != "$current_log" ]; do
+
+  echo "waiting"
+  sleep 1
+  current_log="$(tail -n1 $DIR/../../log/postgres)"
+
+done
+
+is_first_start="yes"
+if [ $first_start == $is_first_start ]; then
+
+  echo Creating super user postgres \(no password\)
+  $pg_bin/createuser -s postgres
+
+  echo Creating database auth
+  $pg_bin/createdb auth
+
+  echo Creating schema with $schema
+  $pg_bin/psql -U postgres -d auth -f $schema
+
+  echo Generating dev user
+  NODE_ENV=development DATABASE_URL=postgres://postgres:@localhost/auth $DIR/../../node_modules/.bin/babel-node $DIR/../db/generate-dev-user
+
+  echo Generating dev client id/secret
+  NODE_ENV=development DATABASE_URL=postgres://postgres:@localhost/auth $DIR/../../node_modules/.bin/babel-node $DIR/../db/generate-client-id-secret
+
+fi
