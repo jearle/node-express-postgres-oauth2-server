@@ -8,7 +8,7 @@ postgres/build
 postgres/data
 
 # Build
-lib
+# lib/
 
 ### Node ###
 # Logs
