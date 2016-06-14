@@ -1,7 +1,8 @@
 
 import { expect } from 'chai'
 
-import { User } from '../../../src/model/user'
+import { User, Role } from '../../../src/model/user'
+import { db } from '../../../src/database'
 
 describe(`User`, () => {
 
@@ -9,7 +10,7 @@ describe(`User`, () => {
 
   const userAttributes = {
 
-    username: 'test.user@gmoney.sike',
+    username: 'test.usfer@gmodfsney.sike',
     password: 'a-password-yo',
     name: 'Test User Joe',
     profileUrl: 'http://google.com/an-image.jpg',
@@ -23,6 +24,61 @@ describe(`User`, () => {
   afterEach(() => user
     .destroy()
     .then(() => user = null))
+
+  describe(`addRole`, () => {
+
+    const testAddRole = ({ userId, user }) => {
+
+      return User
+        .addRole({
+
+          user,
+          userId,
+          roleName: 'admin',
+
+        })
+        .then(({ user, role }) => {
+          
+          return user.getRoles()
+            .then(roles => ({ user, roles }))
+
+        })
+        .then(({ user, roles }) => {
+
+          expect(roles[0].name).to.equal('admin')
+
+          return {
+
+            user,
+            role: roles[0],
+
+          }
+
+        })
+        .then(({ user, role }) => {
+
+          return user
+            .removeRole(role)
+            .then(() => role)
+
+        })
+        .then(role => role.destroy())
+
+    }
+
+    it(`should have the admin role on the user with user id`, () => testAddRole({
+
+      userId: user.id,
+
+    }))
+
+    it(`should have a the admin role on the user with user`, () => testAddRole({
+
+      user: user,
+
+    }))
+
+  })
 
   describe(`findByCredentials`, () => {
 

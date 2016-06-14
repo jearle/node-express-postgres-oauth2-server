@@ -1,4 +1,6 @@
+
 import { User } from '../../src/model/user'
+import { db } from '../../src/database'
 
 const userAttributes = {
 

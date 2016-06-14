@@ -26,8 +26,7 @@ describe(`RefreshToken`, () => {
     .then(() => refreshToken = null))
 
   it(`should create a refresh token instance`, () => {
-
-    console.log(refreshToken.dataValues)
+    
     expect(refreshToken).to.exist
 
   })

@@ -44,6 +44,13 @@ CREATE TABLE oauth_tokens (
 
 );
 
+ALTER TABLE ONLY oauth_tokens
+    ADD CONSTRAINT oauth_tokens_pkey PRIMARY KEY (id);
+
+--
+-- Name: refresh_tokens; Type: TABLE; Schema: public; Owner: -; Tablespace:
+--
+
 CREATE TABLE refresh_tokens (
 
     id uuid NOT NULL,
@@ -56,6 +63,8 @@ CREATE TABLE refresh_tokens (
 
 );
 
+ALTER TABLE ONLY refresh_tokens
+    ADD CONSTRAINT refresh_tokens_pkey PRIMARY KEY (id);
 
 --
 -- Name: oauth_clients; Type: TABLE; Schema: public; Owner: -; Tablespace:
@@ -70,6 +79,8 @@ CREATE TABLE oauth_clients (
 
 );
 
+ALTER TABLE ONLY oauth_clients
+    ADD CONSTRAINT oauth_clients_pkey PRIMARY KEY (client_id, client_secret);
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace:
@@ -87,43 +98,77 @@ CREATE TABLE users (
 
 );
 
-
---
--- Name: oauth_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
---
-
-ALTER TABLE ONLY oauth_tokens
-    ADD CONSTRAINT oauth_tokens_pkey PRIMARY KEY (id);
-
---
--- Name: refresh_tokens_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
---
-
-ALTER TABLE ONLY refresh_tokens
-    ADD CONSTRAINT refresh_tokens_pkey PRIMARY KEY (id);
-
---
--- Name: oauth_clients_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
---
-
-ALTER TABLE ONLY oauth_clients
-    ADD CONSTRAINT oauth_clients_pkey PRIMARY KEY (client_id, client_secret);
-
---
--- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
---
-
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 
+--
+-- user_roles_types: users; Type: TABLE; Schema: public; Owner: -; Tablespace:
+--
+
+CREATE TABLE roles (
+
+    id uuid NOT NULL,
+    name text unique NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+
+);
+
+ALTER TABLE ONLY roles
+    ADD CONSTRAINT roles_pkey PRIMARY KEY (id);
+
+--
+-- user_roles: users; Type: TABLE; Schema: public; Owner: -; Tablespace:
+--
+
+CREATE TABLE user_roles (
+
+    id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    role_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+
+);
+
+ALTER TABLE ONLY user_roles
+    ADD CONSTRAINT user_roles_pkey PRIMARY KEY (id);
+
+--
+-- grant_types: users; Type: TABLE; Schema: public; Owner: -; Tablespace:
+--
+
+CREATE TABLE grant_types (
+
+    id uuid NOT NULL,
+    name text,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+
+);
+
+ALTER TABLE ONLY grant_types
+    ADD CONSTRAINT grant_types_pkey PRIMARY KEY (id);
+
+--
+-- client_grants: users; Type: TABLE; Schema: public; Owner: -; Tablespace:
+--
+
+CREATE TABLE client_grants (
+
+    id uuid NOT NULL,
+    client_id uuid NOT NULL,
+    grant_type_id uuid NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+
+);
+
+ALTER TABLE ONLY client_grants
+    ADD CONSTRAINT client_grants_pkey PRIMARY KEY (id);
 
 --
 -- Name: users_username_password; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX users_username_password ON users USING btree (username, password);
-
-
---
--- PostgreSQL database dump complete
---

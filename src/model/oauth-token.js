@@ -64,4 +64,34 @@ export const OAuthToken = db.define('oauth_token', {
 
   },
 
+}, {
+
+  timestamps: false,
+  
 })
+
+OAuthToken.destroyAllOtherUserTokens = ({
+
+  userId,
+  tokenId,
+
+}) => {
+
+  return OAuthToken
+    .destroy({
+
+      where: {
+
+        userId,
+
+        $not: {
+          
+          id: tokenId,
+
+        },
+
+      },
+
+    })
+
+}

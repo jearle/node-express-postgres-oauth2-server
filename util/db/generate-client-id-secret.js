@@ -1,6 +1,8 @@
 
 import { OAuthClient } from '../../src/model/oauth-client'
 
+import { db } from '../../src/database'
+
 OAuthClient
   .create({
 
@@ -8,3 +10,5 @@ OAuthClient
     clientSecret: '2a5a5962-20e0-43d0-8f3d-acc0b3644046',
 
   })
+  .then(() => console.log('oauth client created'))
+  .then(() => db.close())
